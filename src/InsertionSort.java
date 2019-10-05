@@ -135,9 +135,9 @@ public class InsertionSort {
         return a;
     }
 
-    private static boolean less(long v , long w)
+    private static boolean less(Comparable<Long> v , Comparable<Long> w)
     {
-        return v.compareTo(w) < 0;
+        return v.compareTo((Long) w) < 0;
     }
 
     private static void exchange (long[]a, int i, int j){

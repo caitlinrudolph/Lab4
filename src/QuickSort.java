@@ -14,8 +14,6 @@ public class QuickSort {
     static int numberOfTrials = 50;
     static int MAXINPUTSIZE  = (int) Math.pow(2,20);
     static int MININPUTSIZE  =  1;
-    private static Comparable[] aux;
-
     static String ResultsFolderPath = "/home/caitlin/Documents/Lab4/"; // pathname to results folder
     static FileWriter resultsFile;
     static PrintWriter resultsWriter;
@@ -49,7 +47,7 @@ public class QuickSort {
         System.out.println("Random List 1");
         long[] list1 = createRandomListOfIntegers(20);
         System.out.println(Arrays.toString(list1));
-        long[] sortedlist1 = sort(list1);
+        long[] sortedlist1 = sort(list1, 0, list1.length -1);
         System.out.println("Random List 1 Sorted");
         System.out.println(Arrays.toString(sortedlist1));
 
@@ -57,7 +55,7 @@ public class QuickSort {
         System.out.println("Random List 2");
         long[] list2 = createRandomListOfIntegers(20);
         System.out.println(Arrays.toString(list2));
-        long[] sortedlist2 = sort(list2);
+        long[] sortedlist2 = sort(list2, 0, list1.length -1);
         System.out.println("Random List 2 Sorted");
         System.out.println(Arrays.toString(sortedlist2));
 
@@ -109,7 +107,7 @@ public class QuickSort {
 
                 TrialStopwatch.start(); // *** uncomment this line if timing trials individually
                 /* run the function we're testing on the trial input */
-                long[] foundIndex = mergeSort(testList);
+                long[] foundIndex = sort(testList, 0, testList.length - 1);
                 batchElapsedTime = batchElapsedTime + TrialStopwatch.elapsedTime(); // *** uncomment this line if timing trials individually
             }
 
@@ -123,55 +121,49 @@ public class QuickSort {
         }
     }
 
-    public static void sort(long[] a, int lo, int hi){
+    public static long[] sort(long[] a, int lo, int hi){
 
         if (hi <= lo){
-            return;
+            return a;
         }
 
         int j = partition(a, lo, hi);
         sort(a, lo, j -1);
         sort(a, j+1, hi);
+
+        return a;
     }
 
     private static int partition(long[] a, int lo, int hi){
         //partition into a[lo...j-1], a[j], a[j+1...hi] and return j
-        int i = lo, int j = hi;
+        int i = lo, j = hi;
 
         long v = a[lo];
         while (true){
             //scan right, scan left, check for scan complete, and exchange
-            while (less(a[++i], v)){
-                if (i == hi){
-                    break;
-                }
-                while (less(v, a[--j])){
-                    if (j == lo) {
+            while (less(a[++i], v)) if (i == hi) break;
 
-                        break;
-                    }
-                    if (i >= j) {
+            while (less(v, a[--j])) if (j == lo) break;
 
-                        break;
-                    }
-                    exch(a, i, j);
-                }
-            }
+            if (i >= j) break;
+
+            exchange(a, i, j);
         }
-        esch(a, lo, j);
+        exchange(a, lo, j);
         return j;
     }
 
-    private static boolean less(Comparable v , Comparable w)
+    private static boolean less(Comparable<Long> v , Comparable<Long> w)
     {
-        return v.compareTo(w) < 0;
+        return v.compareTo((Long) w) < 0;
     }
 
-    private static void exch(Comparable[]a, int i, int j){
-        Comparable t = a[i];
+    private static void exchange (long[]a, int i, int j){
+        long t = a[i];
         a[i] = a[j];
         a[j] = t;
     }
+
 
 
 }
