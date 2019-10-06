@@ -11,7 +11,7 @@ public class naiveQuickSort {
     /* define constants */
     static long MAXVALUE =  2000000000;
     static long MINVALUE = -2000000000;
-    static int numberOfTrials = 50;
+    static int numberOfTrials = 100;
     static int MAXINPUTSIZE  = (int) Math.pow(2,20);
     static int MININPUTSIZE  =  1;
     static String ResultsFolderPath = "/home/caitlin/Documents/Lab4/"; // pathname to results folder
@@ -38,6 +38,16 @@ public class naiveQuickSort {
             newList[j] = (long)(MINVALUE + Math.random() * (MAXVALUE - MINVALUE));
         }
         return newList;
+    }
+    public static boolean verifySorted(long[] a) { // takes a list as a parameter and returns true if it is already sorted
+
+        //use on large random lists
+        for(int i = 1; i < a.length; i++){
+            if(a[i-1] > a[i]){
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void checkSortCorrectnes()
@@ -108,6 +118,10 @@ public class naiveQuickSort {
                 TrialStopwatch.start(); // *** uncomment this line if timing trials individually
                 /* run the function we're testing on the trial input */
                 long[] foundIndex = sort(testList, 0, testList.length - 1);
+                if (verifySorted(foundIndex))
+                {
+                    System.out.println("Sort Verified");
+                }
                 batchElapsedTime = batchElapsedTime + TrialStopwatch.elapsedTime(); // *** uncomment this line if timing trials individually
             }
 

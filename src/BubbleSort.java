@@ -11,7 +11,7 @@ public class BubbleSort {
     /* define constants */
     static long MAXVALUE = 2000000000;
     static long MINVALUE = -2000000000;
-    static int numberOfTrials = 50;
+    static int numberOfTrials = 100;
     static int MAXINPUTSIZE = (int) Math.pow(2, 20);
     static int MININPUTSIZE = 1;
     private static Comparable[] aux;
@@ -31,6 +31,17 @@ public class BubbleSort {
         runFullExperiment("BubbleSort-Exp2.txt");
         System.out.println("Running third full experiment...");
         runFullExperiment("BubbleSort-Exp3.txt");
+
+    }
+    public static boolean verifySorted(long[] a) { // takes a list as a parameter and returns true if it is already sorted
+
+        //use on large random lists
+        for(int i = 1; i < a.length; i++){
+            if(a[i-1] > a[i]){
+                return false;
+            }
+        }
+        return true;
 
     }
     public static void checkSortCorrectnes()
@@ -100,7 +111,11 @@ public class BubbleSort {
 
                 TrialStopwatch.start(); // *** uncomment this line if timing trials individually
                 /* run the function we're testing on the trial input */
-                long[] foundIndex = bubbleSortNumberList(testList);
+                long[] list = bubbleSortNumberList(testList);
+                if (verifySorted(list))
+                {
+                    System.out.println("Sort Verified");
+                }
                 batchElapsedTime = batchElapsedTime + TrialStopwatch.elapsedTime(); // *** uncomment this line if timing trials individually
             }
 
