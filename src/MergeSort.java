@@ -12,8 +12,10 @@ public class MergeSort {
     static long MAXVALUE =  2000000000;
     static long MINVALUE = -2000000000;
     static int numberOfTrials = 70;
-    static int MAXINPUTSIZE  = (int) Math.pow(2,20);
+    static int MAXINPUTSIZE  = (int) Math.pow(2,15);
     static int MININPUTSIZE  =  1;
+    static double prevTimePerTrial = 0;
+    static double doublingRatio = 0;
 
     static String ResultsFolderPath = "/home/caitlin/Documents/Lab4/"; // pathname to results folder
     static FileWriter resultsFile;
@@ -127,15 +129,14 @@ public class MergeSort {
 
             //batchElapsedTime = BatchStopwatch.elapsedTime(); // *** comment this line if timing trials individually
             double averageTimePerTrialInBatch = (double) batchElapsedTime / (double) numberOfTrials; // calculate the average time per trial in this batch
-            double prevTimePerTrial = 0;
-            double doublingRatio = 0;
+
             if (prevTimePerTrial != 0)
             {
                 doublingRatio = (double) averageTimePerTrialInBatch / (double) prevTimePerTrial;
             }
             prevTimePerTrial = averageTimePerTrialInBatch;
             /* print data for this size of input */
-            resultsWriter.printf("%12d  %15.2f \n", inputSize, averageTimePerTrialInBatch, doublingRatio); // might as well make the columns look nice
+            resultsWriter.printf("%12d  %15.2f  %15.2f \n", inputSize, averageTimePerTrialInBatch, doublingRatio); // might as well make the columns look nice
             resultsWriter.flush();
             System.out.println(" ....done.");
         }
