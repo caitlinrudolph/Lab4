@@ -11,10 +11,9 @@ public class InsertionSort {
     /* define constants */
     static long MAXVALUE = 2000000000;
     static long MINVALUE = -2000000000;
-    static int numberOfTrials = 100;
+    static int numberOfTrials = 70;
     static int MAXINPUTSIZE = (int) Math.pow(2, 20);
     static int MININPUTSIZE = 1;
-    private static Comparable[] aux;
 
     static String ResultsFolderPath = "/home/caitlin/Documents/Lab4/"; // pathname to results folder
     static FileWriter resultsFile;
@@ -84,7 +83,7 @@ public class InsertionSort {
         ThreadCpuStopWatch BatchStopwatch = new ThreadCpuStopWatch(); // for timing an entire set of trials
         ThreadCpuStopWatch TrialStopwatch = new ThreadCpuStopWatch(); // for timing an individual trial
 
-        resultsWriter.println("#InputSize    AverageTime"); // # marks a comment in gnuplot data
+        resultsWriter.println("#InputSize    AverageTime    Doubling Ratio"); // # marks a comment in gnuplot data
         resultsWriter.flush();
         /* for each size of input we want to test: in this case starting small and doubling the size each time */
         for (int inputSize = MININPUTSIZE; inputSize <= MAXINPUTSIZE; inputSize *= 2) {
@@ -119,18 +118,24 @@ public class InsertionSort {
                 TrialStopwatch.start(); // *** uncomment this line if timing trials individually
                 /* run the function we're testing on the trial input */
                 long[] foundIndex = insertionSort(testList);
-                if (verifySorted(foundIndex))
-                {
-                    System.out.println("Sort Verified");
-                }
+                //if (verifySorted(foundIndex))
+                //{
+                //    System.out.println("Sort Verified");
+                //}
                 batchElapsedTime = batchElapsedTime + TrialStopwatch.elapsedTime(); // *** uncomment this line if timing trials individually
             }
 
             //batchElapsedTime = BatchStopwatch.elapsedTime(); // *** comment this line if timing trials individually
             double averageTimePerTrialInBatch = (double) batchElapsedTime / (double) numberOfTrials; // calculate the average time per trial in this batch
-
+            double prevTimePerTrial = 0;
+            double doublingRatio = 0;
+            if (prevTimePerTrial != 0)
+            {
+                doublingRatio = (double) averageTimePerTrialInBatch / (double) prevTimePerTrial;
+            }
+            prevTimePerTrial = averageTimePerTrialInBatch;
             /* print data for this size of input */
-            resultsWriter.printf("%12d  %15.2f \n", inputSize, averageTimePerTrialInBatch); // might as well make the columns look nice
+            resultsWriter.printf("%12d  %15.2f \n", inputSize, averageTimePerTrialInBatch, doublingRatio); // might as well make the columns look nice
             resultsWriter.flush();
             System.out.println(" ....done.");
         }

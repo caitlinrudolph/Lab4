@@ -11,7 +11,7 @@ public class naiveQuickSort {
     /* define constants */
     static long MAXVALUE =  2000000000;
     static long MINVALUE = -2000000000;
-    static int numberOfTrials = 100;
+    static int numberOfTrials = 70;
     static int MAXINPUTSIZE  = (int) Math.pow(2,20);
     static int MININPUTSIZE  =  1;
     static String ResultsFolderPath = "/home/caitlin/Documents/Lab4/"; // pathname to results folder
@@ -39,6 +39,17 @@ public class naiveQuickSort {
         }
         return newList;
     }
+
+    public static long[] createSortedListOfIntegers(int size) {
+        long[] newList = new long[size];
+        newList[0] = (long) (10 * Math.random());
+        for (int j = 1; j < size; j++) {
+            newList[j] = newList[j - 1] + (long) (10 * Math.random());
+        }
+
+        return newList;
+    }
+
     public static boolean verifySorted(long[] a) { // takes a list as a parameter and returns true if it is already sorted
 
         //use on large random lists
@@ -83,7 +94,7 @@ public class naiveQuickSort {
         ThreadCpuStopWatch BatchStopwatch = new ThreadCpuStopWatch(); // for timing an entire set of trials
         ThreadCpuStopWatch TrialStopwatch = new ThreadCpuStopWatch(); // for timing an individual trial
 
-        resultsWriter.println("#InputSize    AverageTime"); // # marks a comment in gnuplot data
+        resultsWriter.println("#InputSize    AverageTime    Doubling Ratio"); // # marks a comment in gnuplot data
         resultsWriter.flush();
         /* for each size of input we want to test: in this case starting small and doubling the size each time */
         for(int inputSize=MININPUTSIZE;inputSize<=MAXINPUTSIZE; inputSize*=2) {
@@ -118,18 +129,24 @@ public class naiveQuickSort {
                 TrialStopwatch.start(); // *** uncomment this line if timing trials individually
                 /* run the function we're testing on the trial input */
                 long[] foundIndex = sort(testList, 0, testList.length - 1);
-                if (verifySorted(foundIndex))
-                {
-                    System.out.println("Sort Verified");
-                }
+                //if (verifySorted(foundIndex))
+                //{
+                //    System.out.println("Sort Verified");
+                //}
                 batchElapsedTime = batchElapsedTime + TrialStopwatch.elapsedTime(); // *** uncomment this line if timing trials individually
             }
 
             //batchElapsedTime = BatchStopwatch.elapsedTime(); // *** comment this line if timing trials individually
-            double averageTimePerTrialInBatch = (double) batchElapsedTime / (double)numberOfTrials; // calculate the average time per trial in this batch
-
+            double averageTimePerTrialInBatch = (double) batchElapsedTime / (double) numberOfTrials; // calculate the average time per trial in this batch
+            double prevTimePerTrial = 0;
+            double doublingRatio = 0;
+            if (prevTimePerTrial != 0)
+            {
+                doublingRatio = (double) averageTimePerTrialInBatch / (double) prevTimePerTrial;
+            }
+            prevTimePerTrial = averageTimePerTrialInBatch;
             /* print data for this size of input */
-            resultsWriter.printf("%12d  %15.2f \n",inputSize, averageTimePerTrialInBatch); // might as well make the columns look nice
+            resultsWriter.printf("%12d  %15.2f \n", inputSize, averageTimePerTrialInBatch, doublingRatio); // might as well make the columns look nice
             resultsWriter.flush();
             System.out.println(" ....done.");
         }
@@ -137,47 +154,40 @@ public class naiveQuickSort {
 
     public static long[] sort(long[] a, int lo, int hi){
 
-        if (hi <= lo){
-            return a;
+        if (lo < hi)
+        {
+            int pi = partition(a, lo, hi);
+
+            // Recursively sort elements before
+            // partition and after partition
+            sort(a, lo, pi-1);
+            sort(a, pi+1, hi);
         }
-
-        int j = partition(a, lo, hi);
-        sort(a, lo, j -1);
-        sort(a, j+1, hi);
-
         return a;
     }
 
-    private static int partition(long[] a, int lo, int hi){
-        //partition into a[lo...j-1], a[j], a[j+1...hi] and return j
-        int i = lo, j = hi;
+    private static int partition(long[] a, int lo, int hi) {
+        //takes the last element as the pivot
+        long pivot = a[hi];
+        int i = (lo - 1); // index of smaller element
+        for (int j = lo; j < hi; j++) {
+            // If current element is smaller than or
+            // equal to pivot
+            if (a[j] <= pivot) {
+                i++;
 
-        long v = a[lo];
-        while (true){
-            //scan right, scan left, check for scan complete, and exchange
-            while (less(a[++i], v)) if (i == hi) break;
-
-            while (less(v, a[--j])) if (j == lo) break;
-
-            if (i >= j) break;
-
-            exchange(a, i, j);
+                // swap arr[i] and arr[j]
+                long temp = a[i];
+                a[i] = a[j];
+                a[j] = temp;
+            }
         }
-        exchange(a, lo, j);
-        return j;
+
+        // swap arr[i+1] and arr[high] (or pivot)
+        long temp = a[i + 1];
+        a[i + 1] = a[hi];
+        a[hi] = temp;
+
+        return i + 1;
     }
-
-    private static boolean less(Comparable<Long> v , Comparable<Long> w)
-    {
-        return v.compareTo((Long) w) < 0;
     }
-
-    private static void exchange (long[]a, int i, int j){
-        long t = a[i];
-        a[i] = a[j];
-        a[j] = t;
-    }
-
-
-
-}
